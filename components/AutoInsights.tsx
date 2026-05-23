@@ -1,209 +1,232 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  motion,
+} from "framer-motion";
 
 import {
   Sparkles,
+  Brain,
+  Flame,
+  Wallet,
   TrendingUp,
-  AlertTriangle,
 } from "lucide-react";
 
-import { motion } from "framer-motion";
-
-type Task = {
-  id: number;
-  title: string;
-  completed: boolean;
-};
-
-type Expense = {
-  id: number;
-  title: string;
-  amount: number;
-  category: string;
-};
+import {
+  useLifeOS,
+} from "@/context/LifeOSContext";
 
 export default function AutoInsights() {
 
-  const [insights, setInsights] =
-    useState<string[]>([]);
+  const {
+    tasks,
+    expenses,
+    salary,
+    memories,
+  } = useLifeOS();
 
-  useEffect(() => {
+  // =====================
+  // ANALYTICS
+  // =====================
 
-    const savedTasks =
-      localStorage.getItem("tasks");
+  const completedTasks =
+    tasks.filter(
+      (task: any) =>
+        task.completed
+    ).length;
 
-    const savedExpenses =
-      localStorage.getItem("expenses");
+  const pendingTasks =
+    tasks.length -
+    completedTasks;
 
-    const savedSalary =
-      localStorage.getItem("salary");
-
-    const tasks: Task[] =
-      savedTasks
-        ? JSON.parse(savedTasks)
-        : [];
-
-    const expenses: Expense[] =
-      savedExpenses
-        ? JSON.parse(savedExpenses)
-        : [];
-
-    const salary =
-      Number(savedSalary) || 0;
-
-    const generatedInsights: string[] =
-      [];
-
-    const completedTasks =
-      tasks.filter(
-        (task) => task.completed
-      ).length;
-
-    const pendingTasks =
-      tasks.length -
-      completedTasks;
-
-    const completionRate =
-      tasks.length === 0
-        ? 0
-        : (completedTasks /
+  const productivityScore =
+    tasks.length === 0
+      ? 0
+      : Math.round(
+          (completedTasks /
             tasks.length) *
-          100;
+            100
+        );
 
-    const totalExpenses =
-      expenses.reduce(
-        (total, expense) =>
-          total + expense.amount,
-        0
-      );
-
-    if (pendingTasks >= 5) {
-
-      generatedInsights.push(
-        "⚠️ High pending workload detected. Consider reducing task overload."
-      );
-    }
-
-    if (completionRate < 40) {
-
-      generatedInsights.push(
-        "📉 Productivity levels are lower than usual."
-      );
-    }
-
-    if (
-      salary > 0 &&
-      totalExpenses >
-        salary * 0.5
-    ) {
-
-      generatedInsights.push(
-        "💸 Spending patterns are consuming a large portion of salary."
-      );
-    }
-
-    if (
-      generatedInsights.length === 0
-    ) {
-
-      generatedInsights.push(
-        "🚀 Your productivity and finances look stable today."
-      );
-    }
-
-    setInsights(
-      generatedInsights
+  const totalExpenses =
+    expenses.reduce(
+      (
+        total: number,
+        expense: any
+      ) =>
+        total +
+        expense.amount,
+      0
     );
 
-  }, []);
+  const parsedSalary =
+    Number(salary) || 0;
+
+  // =====================
+  // AUTO INSIGHTS
+  // =====================
+
+  const insights: {
+    title: string;
+    description: string;
+    icon: any;
+    gradient: string;
+  }[] = [];
+
+  // Productivity
+  if (
+    productivityScore >= 80
+  ) {
+
+    insights.push({
+      title:
+        "High Productivity Momentum",
+      description:
+        "Your execution consistency appears exceptionally strong recently.",
+      icon: TrendingUp,
+      gradient:
+        "from-green-400 to-cyan-400",
+    });
+  }
+
+  // Burnout
+  if (
+    pendingTasks >= 5
+  ) {
+
+    insights.push({
+      title:
+        "Burnout Probability Rising",
+      description:
+        "Workload pressure has increased significantly. Recovery optimization recommended.",
+      icon: Flame,
+      gradient:
+        "from-red-500 to-orange-500",
+    });
+  }
+
+  // Finance
+  if (
+    parsedSalary > 0 &&
+    totalExpenses >
+      parsedSalary * 0.7
+  ) {
+
+    insights.push({
+      title:
+        "Financial Pressure Detected",
+      description:
+        "Expenses are consuming most of your monthly financial capacity.",
+      icon: Wallet,
+      gradient:
+        "from-pink-500 to-red-500",
+    });
+  }
+
+  // Memory Intelligence
+  if (
+    memories.length >= 3
+  ) {
+
+    insights.push({
+      title:
+        "Behavioral Intelligence Expanding",
+      description:
+        "NOVA has accumulated enough behavioral observations to improve future recommendations.",
+      icon: Brain,
+      gradient:
+        "from-cyan-400 to-blue-500",
+    });
+  }
+
+  // Stable system
+  if (
+    insights.length === 0
+  ) {
+
+    insights.push({
+      title:
+        "Systems Operating Normally",
+      description:
+        "Productivity, finances, and workload currently appear stable.",
+      icon: Sparkles,
+      gradient:
+        "from-cyan-400 to-blue-500",
+    });
+  }
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl h-full">
+    <div className="space-y-5">
 
-      <div className="flex items-center gap-4 mb-8">
+      {insights.map(
+        (
+          insight,
+          index
+        ) => {
 
-        <div className="bg-cyan-500/20 p-4 rounded-2xl">
+          const Icon =
+            insight.icon;
 
-          <Sparkles className="text-cyan-400 w-8 h-8" />
-
-        </div>
-
-        <div>
-
-          <h2 className="text-3xl font-bold">
-            AI Insights
-          </h2>
-
-          <p className="text-gray-400">
-            Live behavioral analysis
-          </p>
-
-        </div>
-
-      </div>
-
-      <div className="space-y-5">
-
-        {insights.map(
-          (
-            insight,
-            index
-          ) => (
+          return (
 
             <motion.div
               key={index}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                delay:
+                  index * 0.1,
+              }}
               whileHover={{
                 scale: 1.02,
               }}
-              className="bg-white/5 border border-white/10 rounded-2xl p-5"
+              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 overflow-hidden relative"
             >
 
-              <div className="flex items-start gap-4">
+              {/* Glow */}
+              <div
+                className={`absolute inset-0 opacity-10 bg-gradient-to-r ${insight.gradient}`}
+              />
 
-                <TrendingUp className="text-cyan-400 mt-1" />
+              <div className="relative z-10 flex items-start gap-5">
 
-                <p className="text-gray-300 leading-7">
+                <div
+                  className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${insight.gradient} flex items-center justify-center shadow-2xl`}
+                >
 
-                  {insight}
+                  <Icon className="text-white w-8 h-8" />
 
-                </p>
+                </div>
+
+                <div>
+
+                  <h2 className="text-2xl font-bold text-white mb-3">
+
+                    {insight.title}
+
+                  </h2>
+
+                  <p className="text-gray-300 text-lg leading-8">
+
+                    {insight.description}
+
+                  </p>
+
+                </div>
 
               </div>
 
             </motion.div>
-          )
-        )}
 
-        {/* Warning */}
-        <motion.div
-          whileHover={{
-            scale: 1.02,
-          }}
-          className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-5 mt-6"
-        >
-
-          <div className="flex gap-4">
-
-            <AlertTriangle className="text-yellow-400 mt-1" />
-
-            <div>
-
-              <h3 className="font-bold text-yellow-300 mb-2">
-                AI Observation
-              </h3>
-
-              <p className="text-gray-300 leading-7">
-                Consistency and recovery balance are the biggest predictors of long-term productivity.
-              </p>
-
-            </div>
-
-          </div>
-
-        </motion.div>
-
-      </div>
+          );
+        }
+      )}
 
     </div>
   );

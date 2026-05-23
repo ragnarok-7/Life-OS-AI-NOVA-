@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
-import AIMemoryEngine from "@/components/AIMemoryEngine";
-import AIBehaviorEngine from "@/components/AIBehaviorEngine";
+import type {
+  Metadata,
+} from "next";
+
 import {
   Geist,
   Geist_Mono,
@@ -12,11 +13,14 @@ import {
   LifeOSProvider,
 } from "@/context/LifeOSContext";
 
-const geistSans = Geist({
-  variable:
-    "--font-geist-sans",
-  subsets: ["latin"],
-});
+import AIBehaviorEngine from "@/components/AIBehaviorEngine";
+
+const geistSans =
+  Geist({
+    variable:
+      "--font-geist-sans",
+    subsets: ["latin"],
+  });
 
 const geistMono =
   Geist_Mono({
@@ -25,12 +29,15 @@ const geistMono =
     subsets: ["latin"],
   });
 
-export const metadata: Metadata =
-  {
-    title: "Life OS AI",
-    description:
-      "AI-powered life operating system",
-  };
+export const metadata:
+  Metadata = {
+
+  title:
+    "NOVA AI OS",
+
+  description:
+    "Adaptive AI Operating System",
+};
 
 export default function RootLayout({
   children,
@@ -39,20 +46,19 @@ export default function RootLayout({
 }>) {
 
   return (
-
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
 
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen bg-black text-white">
 
         <LifeOSProvider>
-          <AIMemoryEngine />
+
+          {/* Global AI Engine */}
           <AIBehaviorEngine />
 
           {children}
-          
 
         </LifeOSProvider>
 

@@ -15,11 +15,12 @@ export default function AIBehaviorEngine() {
     expenses,
     memories,
     setMemories,
+    salary,
   } = useLifeOS();
 
   useEffect(() => {
 
-    const insights: string[] =
+    const newMemories: string[] =
       [];
 
     // =====================
@@ -36,45 +37,17 @@ export default function AIBehaviorEngine() {
       tasks.length -
       completedTasks;
 
-    const completionRate =
+    const productivityScore =
       tasks.length === 0
         ? 0
-        : (completedTasks /
-            tasks.length) *
-          100;
-
-    // Overload
-    if (pendingTasks >= 7) {
-
-      insights.push(
-        "⚠️ Your workload is becoming overloaded. Reduce non-essential tasks."
-      );
-    }
-
-    // Productivity Drop
-    if (
-      completionRate < 40 &&
-      tasks.length >= 5
-    ) {
-
-      insights.push(
-        "📉 Your productivity consistency has dropped recently."
-      );
-    }
-
-    // Strong Productivity
-    if (
-      completionRate > 80 &&
-      tasks.length >= 3
-    ) {
-
-      insights.push(
-        "🚀 Excellent consistency detected in task completion."
-      );
-    }
+        : Math.round(
+            (completedTasks /
+              tasks.length) *
+              100
+          );
 
     // =====================
-    // FINANCIAL ANALYSIS
+    // FINANCE ANALYSIS
     // =====================
 
     const totalExpenses =
@@ -88,82 +61,103 @@ export default function AIBehaviorEngine() {
         0
       );
 
+    const parsedSalary =
+      Number(salary) || 0;
+
+    // =====================
+    // MEMORY RULES
+    // =====================
+
+    // Burnout
+    if (
+      pendingTasks >= 5
+    ) {
+
+      newMemories.push(
+        "High workload pressure detected repeatedly."
+      );
+    }
+
+    // Productivity
+    if (
+      productivityScore >= 80
+    ) {
+
+      newMemories.push(
+        "User demonstrates strong productivity consistency."
+      );
+    }
+
+    // Low productivity
+    if (
+      productivityScore <
+        40 &&
+      tasks.length >= 5
+    ) {
+
+      newMemories.push(
+        "Execution consistency appears unstable."
+      );
+    }
+
     // Overspending
-    if (totalExpenses > 7000) {
-
-      insights.push(
-        "💸 Spending patterns are rising rapidly this cycle."
-      );
-    }
-
-    // Controlled Spending
     if (
-      totalExpenses < 3000 &&
-      expenses.length >= 3
+      parsedSalary > 0 &&
+      totalExpenses >
+        parsedSalary * 0.7
     ) {
 
-      insights.push(
-        "✅ Financial discipline appears stable."
+      newMemories.push(
+        "Expense levels are consuming most monthly income."
       );
     }
 
-    // =====================
-    // BURNOUT ANALYSIS
-    // =====================
-
+    // Stable finance
     if (
-      pendingTasks >= 5 &&
-      completionRate < 50
+      parsedSalary > 0 &&
+      totalExpenses <
+        parsedSalary * 0.4
     ) {
 
-      insights.push(
-        "🧠 Burnout risk increasing due to excessive pending workload."
+      newMemories.push(
+        "User maintains relatively stable financial discipline."
       );
     }
 
     // =====================
-    // ROUTINE INTELLIGENCE
+    // SAVE UNIQUE MEMORIES
     // =====================
 
+    const uniqueMemories =
+      [
+        ...memories,
+        ...newMemories,
+      ].filter(
+        (
+          memory,
+          index,
+          self
+        ) =>
+          self.indexOf(
+            memory
+          ) === index
+      );
+
+    // Prevent infinite loop
     if (
-      tasks.length >= 10
-    ) {
-
-      insights.push(
-        "📚 High activity levels detected. Recovery balance is important."
-      );
-    }
-
-    // =====================
-    // SAFE UPDATE CHECK
-    // =====================
-
-    const currentMemories =
-      JSON.stringify(
-        memories
-      );
-
-    const newMemories =
-      JSON.stringify(
-        insights
-      );
-
-    // ONLY update if changed
-    if (
-      currentMemories !==
-      newMemories
+      uniqueMemories.length !==
+      memories.length
     ) {
 
       setMemories(
-        insights
+        uniqueMemories
       );
     }
 
   }, [
     tasks,
     expenses,
-    memories,
-    setMemories,
+    salary,
   ]);
 
   return null;

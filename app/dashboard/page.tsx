@@ -4,6 +4,10 @@ import Sidebar from "@/components/Sidebar";
 
 import AIIntelligencePanel from "@/components/AIIntelligencePanel";
 
+import AutoInsights from "@/components/AutoInsights";
+
+import AIAlertsPanel from "@/components/AIAlertsPanel";
+
 import {
   useLifeOS,
 } from "@/context/LifeOSContext";
@@ -287,8 +291,26 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* AI Intelligence */}
-        <AIIntelligencePanel />
+        {/* AI Intelligence Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+          {/* LEFT */}
+          <div className="xl:col-span-2">
+
+            <AIIntelligencePanel />
+
+          </div>
+
+          {/* RIGHT */}
+          <div className="space-y-6">
+
+            <AutoInsights />
+
+            <AIAlertsPanel />
+
+          </div>
+
+        </div>
 
       </section>
 
