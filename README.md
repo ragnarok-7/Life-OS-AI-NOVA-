@@ -178,9 +178,9 @@ NOVA contains multiple adaptive AI engines:
 
 ---
 
-## 🏆 Progression System
+## 🏆 Tasks Creation and MAnagement
 
-![Progression](public/github/progression.png)
+![Tasks](public/github/tasks.png)
 
 ---
 
