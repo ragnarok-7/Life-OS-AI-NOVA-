@@ -14,6 +14,7 @@ import {
 } from "@/context/LifeOSContext";
 
 import AIBehaviorEngine from "@/components/AIBehaviorEngine";
+import NovaHUD from "@/components/NovaHUD";
 
 const geistSans =
   Geist({
@@ -57,6 +58,7 @@ export default function RootLayout({
 
           {/* Global AI Engine */}
           <AIBehaviorEngine />
+          <NovaHUD />
 
           {children}
 

@@ -12,9 +12,24 @@ import {
   Wallet,
   BarChart3,
   Settings,
+  UtensilsCrossed,
+  Activity,
+  Brain,
+  TimerReset,
+  Moon,
+  Sparkles,
+  CalendarClock,
+  Network,
+  ShieldAlert,
+  MemoryStick,
+  Clock3,
+  Orbit,
+  Command,
+  Rocket
 } from "lucide-react";
 
 import { motion } from "framer-motion";
+import path from "path";
 
 export default function Sidebar() {
 
@@ -22,36 +37,127 @@ export default function Sidebar() {
     usePathname();
 
   const menuItems = [
+
+    {
+      name: "Core",
+      path: "/core",
+      icon: Orbit,
+    },
+
     {
       name: "Dashboard",
       path: "/dashboard",
       icon: LayoutDashboard,
     },
+
     {
       name: "Planner",
       path: "/planner",
       icon: CalendarDays,
     },
+
     {
       name: "Tasks",
       path: "/tasks",
       icon: CheckSquare,
     },
+
+    {
+      name: "Nutrition",
+      path: "/nutrition",
+      icon: UtensilsCrossed,
+    },
+
+    {
+      name: "Habits",
+      path: "/habits",
+      icon: Activity,
+    },
+
+    {
+      name: "Memory",
+      path: "/memory",
+      icon: Brain,
+    },
+
+    {
+      name: "Focus",
+      path: "/focus",
+      icon: TimerReset,
+    },
+
+    {
+      name: "Recovery",
+      path: "/recovery",
+      icon: Moon,
+    },
+
+    {
+      name: "Predictions",
+      path: "/predictions",
+      icon: Sparkles,
+    },
+
+    {
+      name: "Autonomous",
+      path: "/autonomous",
+      icon: CalendarClock,
+    },
+
+    {
+      name: "Agents",
+      path: "/agents",
+      icon: Network,
+    },
+
+    {
+      name: "Automation",
+      path: "/automation",
+      icon: ShieldAlert,
+    },
+
+    {
+      name: "Personality",
+      path: "/personality",
+      icon: MemoryStick,
+    },
+
+    {
+      name: "Timeline",
+      path: "/timeline",
+      icon: Clock3,
+    },
+
     {
       name: "AI Coach",
       path: "/ai-coach",
       icon: Bot,
     },
+
+    {
+      name: "Command Center",
+      path: "/command-center",
+      icon: Command,
+    },
+
     {
       name: "Finance",
       path: "/finance",
       icon: Wallet,
     },
+
     {
       name: "Analytics",
       path: "/analytics",
       icon: BarChart3,
     },
+
+    {
+      name: "Optimizer",
+      path: "/optimizer",
+      icon: Rocket,
+    },
+
     {
       name: "Settings",
       path: "/settings",
@@ -62,7 +168,7 @@ export default function Sidebar() {
   return (
     <aside className="w-[280px] min-h-screen bg-white/5 backdrop-blur-xl border-r border-white/10 p-6 flex flex-col">
 
-      {/* Logo */}
+      {/* LOGO */}
       <motion.div
         initial={{
           opacity: 0,
@@ -77,9 +183,9 @@ export default function Sidebar() {
 
         <div className="flex items-center gap-4">
 
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center shadow-2xl shadow-cyan-500/30">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center shadow-[0_0_40px_rgba(34,211,238,0.4)]">
 
-            <Bot className="text-white w-7 h-7" />
+            <Brain className="text-white w-7 h-7" />
 
           </div>
 
@@ -87,13 +193,13 @@ export default function Sidebar() {
 
             <h1 className="text-2xl font-bold text-white">
 
-              Life OS
+              NOVA OS
 
             </h1>
 
             <p className="text-gray-400 text-sm">
 
-              AI Life System
+              Cognitive Intelligence System
 
             </p>
 
@@ -103,8 +209,8 @@ export default function Sidebar() {
 
       </motion.div>
 
-      {/* Navigation */}
-      <nav className="flex flex-col gap-3">
+      {/* NAV */}
+      <nav className="flex flex-col gap-3 overflow-y-auto pr-1">
 
         {menuItems.map(
           (item, index) => {
@@ -134,7 +240,7 @@ export default function Sidebar() {
                   }}
                   className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${
                     active
-                      ? "bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-2xl shadow-cyan-500/20"
+                      ? "bg-gradient-to-r from-cyan-400 to-blue-500 text-white shadow-[0_0_30px_rgba(34,211,238,0.4)]"
                       : "bg-white/5 border border-white/5 text-gray-300 hover:bg-white/10"
                   }`}
                 >
@@ -156,7 +262,7 @@ export default function Sidebar() {
 
       </nav>
 
-      {/* Bottom AI Box */}
+      {/* AI STATUS */}
       <motion.div
         initial={{
           opacity: 0,
@@ -164,18 +270,18 @@ export default function Sidebar() {
         animate={{
           opacity: 1,
         }}
-        className="mt-auto bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-3xl p-5"
+        className="mt-6 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-3xl p-5"
       >
 
         <h2 className="text-xl font-bold mb-2">
 
-          🚀 AI Optimization Active
+          🌌 NOVA Core Active
 
         </h2>
 
         <p className="text-gray-400 leading-7 text-sm">
 
-          Your productivity, finance, and routines are being continuously optimized by AI.
+          Cognitive orchestration, behavioral intelligence, predictive analysis, autonomous optimization, and adaptive AI systems are fully operational.
 
         </p>
 

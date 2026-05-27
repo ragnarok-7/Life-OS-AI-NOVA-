@@ -1,125 +1,48 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
-
-import AIIntelligencePanel from "@/components/AIIntelligencePanel";
-
-import AutoInsights from "@/components/AutoInsights";
-
-import AIAlertsPanel from "@/components/AIAlertsPanel";
-
-import {
-  useLifeOS,
-} from "@/context/LifeOSContext";
-
 import {
   Brain,
-  CheckCircle2,
-  Wallet,
-  Activity,
-  Sparkles,
 } from "lucide-react";
 
-import {
-  motion,
-} from "framer-motion";
+import Sidebar from "@/components/Sidebar";
+
+import NovaHUD from "@/components/NovaHUD";
+
+import AIProductivityEngine from "@/components/AIProductivityEngine";
 
 export default function DashboardPage() {
-
-  const {
-    tasks,
-    expenses,
-    memories,
-  } = useLifeOS();
-
-  // =====================
-  // TASK ANALYTICS
-  // =====================
-
-  const completedTasks =
-    tasks.filter(
-      (task: any) =>
-        task.completed
-    ).length;
-
-  const pendingTasks =
-    tasks.length -
-    completedTasks;
-
-  const productivityScore =
-    tasks.length === 0
-      ? 0
-      : Math.round(
-          (completedTasks /
-            tasks.length) *
-            100
-        );
-
-  // =====================
-  // FINANCE
-  // =====================
-
-  const totalExpenses =
-    expenses.reduce(
-      (
-        total: number,
-        expense: any
-      ) =>
-        total +
-        expense.amount,
-      0
-    );
 
   return (
     <main className="flex min-h-screen bg-gradient-to-br from-black via-[#0f172a] to-black text-white overflow-hidden">
 
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <Sidebar />
 
-      {/* Main */}
+      {/* MAIN */}
       <section className="flex-1 p-10 overflow-y-auto">
 
-        {/* Header */}
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: -20,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          className="mb-10"
-        >
+        {/* HEADER */}
+        <div className="mb-10">
 
           <div className="flex items-center gap-5">
 
-            <motion.div
-              animate={{
-                scale: [1, 1.08, 1],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-              }}
-              className="w-20 h-20 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center shadow-2xl shadow-cyan-500/30"
-            >
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center shadow-2xl shadow-cyan-500/30">
 
               <Brain className="w-10 h-10 text-white" />
 
-            </motion.div>
+            </div>
 
             <div>
 
               <h1 className="text-5xl font-bold">
 
-                NOVA Command Center
+                AI Dashboard
 
               </h1>
 
               <p className="text-gray-400 mt-2 text-lg">
 
-                Adaptive AI operating system dashboard
+                Adaptive intelligence and productivity overview system
 
               </p>
 
@@ -127,192 +50,180 @@ export default function DashboardPage() {
 
           </div>
 
-        </motion.div>
-
-        {/* Top Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-
-          {/* Tasks */}
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-          >
-
-            <div className="flex items-center justify-between mb-5">
-
-              <div>
-
-                <p className="text-gray-400 mb-2">
-
-                  Total Tasks
-
-                </p>
-
-                <h2 className="text-5xl font-bold">
-
-                  {tasks.length}
-
-                </h2>
-
-              </div>
-
-              <CheckCircle2 className="text-cyan-400 w-10 h-10" />
-
-            </div>
-
-            <p className="text-gray-500">
-
-              {completedTasks} completed • {pendingTasks} pending
-
-            </p>
-
-          </motion.div>
-
-          {/* Productivity */}
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-          >
-
-            <div className="flex items-center justify-between mb-5">
-
-              <div>
-
-                <p className="text-gray-400 mb-2">
-
-                  Productivity
-
-                </p>
-
-                <h2 className="text-5xl font-bold text-green-400">
-
-                  {productivityScore}%
-
-                </h2>
-
-              </div>
-
-              <Activity className="text-green-400 w-10 h-10" />
-
-            </div>
-
-            <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden">
-
-              <div
-                style={{
-                  width: `${productivityScore}%`,
-                }}
-                className="h-full bg-gradient-to-r from-green-400 to-cyan-400 rounded-full"
-              />
-
-            </div>
-
-          </motion.div>
-
-          {/* Expenses */}
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-          >
-
-            <div className="flex items-center justify-between mb-5">
-
-              <div>
-
-                <p className="text-gray-400 mb-2">
-
-                  Total Spending
-
-                </p>
-
-                <h2 className="text-5xl font-bold text-red-400">
-
-                  ₹{totalExpenses}
-
-                </h2>
-
-              </div>
-
-              <Wallet className="text-red-400 w-10 h-10" />
-
-            </div>
-
-            <p className="text-gray-500">
-
-              AI monitored financial activity
-
-            </p>
-
-          </motion.div>
-
-          {/* Memories */}
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-          >
-
-            <div className="flex items-center justify-between mb-5">
-
-              <div>
-
-                <p className="text-gray-400 mb-2">
-
-                  AI Memories
-
-                </p>
-
-                <h2 className="text-5xl font-bold text-purple-400">
-
-                  {memories.length}
-
-                </h2>
-
-              </div>
-
-              <Sparkles className="text-purple-400 w-10 h-10" />
-
-            </div>
-
-            <p className="text-gray-500">
-
-              Behavioral intelligence observations
-
-            </p>
-
-          </motion.div>
-
         </div>
 
-        {/* AI Intelligence Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* TOP STATS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
-          {/* LEFT */}
-          <div className="xl:col-span-2">
+          {/* STATUS */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
 
-            <AIIntelligencePanel />
+            <p className="text-gray-400 mb-2">
+
+              Intelligence Layer
+
+            </p>
+
+            <h2 className="text-5xl font-bold text-cyan-300">
+
+              Active
+
+            </h2>
+
+            <p className="text-sm text-gray-500 mt-3">
+
+              AI systems fully operational
+
+            </p>
 
           </div>
 
-          {/* RIGHT */}
-          <div className="space-y-6">
+          {/* EMOTIONAL */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
 
-            <AutoInsights />
+            <p className="text-gray-400 mb-2">
 
-            <AIAlertsPanel />
+              Emotional Engine
+
+            </p>
+
+            <h2 className="text-5xl font-bold text-pink-300">
+
+              Adaptive
+
+            </h2>
+
+            <p className="text-sm text-gray-500 mt-3">
+
+              Conversational intelligence active
+
+            </p>
+
+          </div>
+
+          {/* MEMORY */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
+
+            <p className="text-gray-400 mb-2">
+
+              Long-Term Memory
+
+            </p>
+
+            <h2 className="text-5xl font-bold text-green-300">
+
+              Learning
+
+            </h2>
+
+            <p className="text-sm text-gray-500 mt-3">
+
+              Persistent memory engine running
+
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* MAIN GRID */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+          {/* PRODUCTIVITY */}
+          <AIProductivityEngine />
+
+          {/* NOVA CORE */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
+
+            <div className="flex items-center gap-4 mb-8">
+
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+
+                <Brain className="text-white w-7 h-7" />
+
+              </div>
+
+              <div>
+
+                <h2 className="text-3xl font-bold">
+
+                  NOVA Core
+
+                </h2>
+
+                <p className="text-gray-400">
+
+                  Adaptive behavioral intelligence system
+
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="space-y-5">
+
+              {/* NEURAL */}
+              <div className="bg-black/30 border border-white/10 rounded-2xl p-5">
+
+                <p className="text-gray-400 mb-2">
+
+                  Neural Intelligence
+
+                </p>
+
+                <h3 className="text-4xl font-bold text-cyan-300">
+
+                  Online
+
+                </h3>
+
+              </div>
+
+              {/* CONVERSATIONAL */}
+              <div className="bg-black/30 border border-white/10 rounded-2xl p-5">
+
+                <p className="text-gray-400 mb-2">
+
+                  Conversational Awareness
+
+                </p>
+
+                <h3 className="text-4xl font-bold text-pink-300">
+
+                  Active
+
+                </h3>
+
+              </div>
+
+              {/* LEARNING */}
+              <div className="bg-black/30 border border-white/10 rounded-2xl p-5">
+
+                <p className="text-gray-400 mb-2">
+
+                  Behavioral Learning
+
+                </p>
+
+                <h3 className="text-4xl font-bold text-green-300">
+
+                  Evolving
+
+                </h3>
+
+              </div>
+
+            </div>
 
           </div>
 
         </div>
 
       </section>
+
+      {/* HUD */}
+      <NovaHUD />
 
     </main>
   );

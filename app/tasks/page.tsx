@@ -6,6 +6,12 @@ import Sidebar from "@/components/Sidebar";
 
 import { useLifeOS } from "@/context/LifeOSContext";
 
+import AITaskIntelligence from "@/components/AITaskIntelligence";
+
+import AIPriorityQueue from "@/components/AIPriorityQueue";
+
+import AIProcrastinationEngine from "@/components/AIProcrastinationEngine";
+
 import {
   CheckCircle2,
   Circle,
@@ -134,11 +140,13 @@ export default function TasksPage() {
   return (
     <main className="flex min-h-screen bg-gradient-to-br from-black via-[#0f172a] to-black text-white overflow-hidden">
 
+      {/* SIDEBAR */}
       <Sidebar />
 
+      {/* MAIN */}
       <section className="flex-1 p-10 overflow-y-auto">
 
-        {/* Header */}
+        {/* HEADER */}
         <motion.div
           initial={{
             opacity: 0,
@@ -184,7 +192,7 @@ export default function TasksPage() {
 
         </motion.div>
 
-        {/* Stats */}
+        {/* STATS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
 
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
@@ -225,7 +233,7 @@ export default function TasksPage() {
 
         </div>
 
-        {/* Add Task */}
+        {/* ADD TASK */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-5 flex items-center gap-4 mb-10">
 
           <input
@@ -260,14 +268,17 @@ export default function TasksPage() {
 
         </div>
 
-        {/* Tasks */}
-        <div className="space-y-5">
+        {/* TASKS */}
+        <div className="space-y-5 mb-10">
 
           {tasks.map(
             (task: any) => (
 
               <motion.div
                 key={task.id}
+                whileHover={{
+                  scale: 1.01,
+                }}
                 className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex items-center justify-between"
               >
 
@@ -307,6 +318,12 @@ export default function TasksPage() {
 
                     </h3>
 
+                    <p className="text-gray-500 mt-1">
+
+                      AI behavioral analysis active
+
+                    </p>
+
                   </div>
 
                 </div>
@@ -331,8 +348,8 @@ export default function TasksPage() {
 
         </div>
 
-        {/* AI Insight */}
-        <div className="mt-10 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-3xl p-8">
+        {/* AI INSIGHT */}
+        <div className="mb-10 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-3xl p-8">
 
           <div className="flex items-start gap-5">
 
@@ -351,6 +368,27 @@ export default function TasksPage() {
               </p>
 
             </div>
+
+          </div>
+
+        </div>
+
+        {/* AI SYSTEMS */}
+        <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6">
+
+          {/* LEFT */}
+          <div className="space-y-6">
+
+            <AITaskIntelligence />
+
+            <AIProcrastinationEngine />
+
+          </div>
+
+          {/* RIGHT */}
+          <div className="space-y-6">
+
+            <AIPriorityQueue />
 
           </div>
 

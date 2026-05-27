@@ -1,183 +1,274 @@
 "use client";
 
-import {
-  useEffect,
-  useState,
-} from "react";
-
 import Sidebar from "@/components/Sidebar";
 
 import {
-  Brain,
-  TrendingUp,
-  Activity,
-  Wallet,
-  Sparkles,
-} from "lucide-react";
-
-import { motion } from "framer-motion";
+  useLifeOS,
+} from "@/context/LifeOSContext";
 
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
+  motion,
+} from "framer-motion";
+
+import {
+
+  Brain,
+
+  Activity,
+
+  Flame,
+
+  Wallet,
+
+  TrendingUp,
+
+  ShieldCheck,
+
+  Sparkles,
+
+} from "lucide-react";
+
+import {
+
+  LineChart,
+
+  Line,
+
   CartesianGrid,
+
+  XAxis,
+
+  YAxis,
+
+  Tooltip,
+
+  ResponsiveContainer,
+
+  PieChart,
+
+  Pie,
+
+  Cell,
+
+  RadarChart,
+
+  PolarGrid,
+
+  PolarAngleAxis,
+
+  PolarRadiusAxis,
+
+  Radar,
+
 } from "recharts";
-
-type Task = {
-  id: number;
-  title: string;
-  completed: boolean;
-};
-
-type Expense = {
-  id: number;
-  title: string;
-  amount: number;
-  category: string;
-};
 
 export default function AnalyticsPage() {
 
-  const [tasks, setTasks] =
-    useState<Task[]>([]);
+  const {
 
-  const [expenses, setExpenses] =
-    useState<Expense[]>([]);
+    disciplineScore,
 
-  // Load Data
-  useEffect(() => {
+    meals,
 
-    const savedTasks =
-      localStorage.getItem(
-        "tasks"
-      );
+    expenses,
 
-    if (savedTasks) {
-      setTasks(
-        JSON.parse(savedTasks)
-      );
-    }
+    salary,
 
-    const savedExpenses =
-      localStorage.getItem(
-        "expenses"
-      );
+    tasks,
 
-    if (savedExpenses) {
-      setExpenses(
-        JSON.parse(
-          savedExpenses
-        )
-      );
-    }
+    aiMood,
 
-  }, []);
+  } = useLifeOS();
 
-  // Analytics
-  const completedTasks =
-    tasks.filter(
-      (task) =>
-        task.completed
-    ).length;
+  // =====================
+  // PRODUCTIVITY DATA
+  // =====================
 
-  const pendingTasks =
-    tasks.length -
-    completedTasks;
+  const productivityData = [
 
-  const completionRate =
-    tasks.length === 0
-      ? 0
-      : Math.round(
-          (completedTasks /
-            tasks.length) *
-            100
-        );
+    {
+      day: "Mon",
+      productivity: 62,
+    },
+
+    {
+      day: "Tue",
+      productivity: 71,
+    },
+
+    {
+      day: "Wed",
+      productivity: 66,
+    },
+
+    {
+      day: "Thu",
+      productivity: 84,
+    },
+
+    {
+      day: "Fri",
+      productivity: disciplineScore,
+    },
+
+    {
+      day: "Sat",
+      productivity: 73,
+    },
+
+    {
+      day: "Sun",
+      productivity: 68,
+    },
+  ];
+
+  // =====================
+  // NUTRITION DATA
+  // =====================
+
+  const totalProtein =
+    meals.reduce(
+      (
+        acc: number,
+        meal: any
+      ) =>
+        acc +
+        (meal.protein || 0),
+      0
+    );
+
+  const totalCarbs =
+    meals.reduce(
+      (
+        acc: number,
+        meal: any
+      ) =>
+        acc +
+        (meal.carbs || 0),
+      0
+    );
+
+  const totalFats =
+    meals.reduce(
+      (
+        acc: number,
+        meal: any
+      ) =>
+        acc +
+        (meal.fats || 0),
+      0
+    );
+
+  const nutritionData = [
+
+    {
+      name: "Protein",
+      value: totalProtein,
+      color: "#22d3ee",
+    },
+
+    {
+      name: "Carbs",
+      value: totalCarbs,
+      color: "#a855f7",
+    },
+
+    {
+      name: "Fats",
+      value: totalFats,
+      color: "#f97316",
+    },
+  ];
+
+  // =====================
+  // FINANCE DATA
+  // =====================
 
   const totalExpenses =
     expenses.reduce(
       (
-        total,
-        expense
+        acc: number,
+        item: any
       ) =>
-        total +
-        expense.amount,
+        acc +
+        (item.amount || 0),
       0
     );
 
-  // Expense Categories
-  const categoryMap: any = {};
+  const remaining =
+    Number(salary) -
+    totalExpenses;
 
-  expenses.forEach(
-    (expense) => {
+  // =====================
+  // AI RADAR
+  // =====================
 
-      if (
-        !categoryMap[
-          expense.category
-        ]
-      ) {
+  const radarData = [
 
-        categoryMap[
-          expense.category
-        ] = 0;
-      }
+    {
+      subject: "Focus",
+      A: disciplineScore,
+    },
 
-      categoryMap[
-        expense.category
-      ] += expense.amount;
-    }
-  );
+    {
+      subject: "Recovery",
+      A:
+        totalProtein >= 100
+          ? 85
+          : 55,
+    },
 
-  const expenseChartData =
-    Object.keys(
-      categoryMap
-    ).map((category) => ({
-      name: category,
-      value:
-        categoryMap[
-          category
-        ],
-    }));
+    {
+      subject: "Finance",
+      A:
+        remaining > 0
+          ? 78
+          : 40,
+    },
 
-  // Productivity
-  const productivityData =
-    [
-      {
-        name:
-          "Completed",
-        value:
-          completedTasks,
-      },
-      {
-        name:
-          "Pending",
-        value:
-          pendingTasks,
-      },
-    ];
+    {
+      subject: "Habits",
+      A:
+        tasks.length >= 5
+          ? 80
+          : 50,
+    },
 
-  const COLORS = [
-    "#22c55e",
-    "#3b82f6",
-    "#eab308",
-    "#ef4444",
-    "#a855f7",
+    {
+      subject: "Energy",
+      A:
+        meals.length >= 3
+          ? 82
+          : 58,
+    },
   ];
 
-  return (
-    <main className="flex min-h-screen bg-gradient-to-br from-black via-[#0f172a] to-black text-white overflow-hidden">
+  // =====================
+  // AI PREDICTIONS
+  // =====================
 
+  const burnoutRisk =
+    disciplineScore < 50
+      ? "High"
+      : disciplineScore < 75
+      ? "Moderate"
+      : "Low";
+
+  const momentum =
+    disciplineScore >= 80
+      ? "Rising"
+      : "Stable";
+
+  return (
+    <main className="flex min-h-screen bg-gradient-to-br from-black via-[#050816] to-black text-white overflow-hidden">
+
+      {/* SIDEBAR */}
       <Sidebar />
 
-      <section className="flex-1 p-10 overflow-y-auto">
+      {/* MAIN */}
+      <section className="flex-1 overflow-y-auto p-10">
 
-        {/* Header */}
+        {/* HEADER */}
         <motion.div
           initial={{
             opacity: 0,
@@ -187,35 +278,29 @@ export default function AnalyticsPage() {
             opacity: 1,
             y: 0,
           }}
-          className="mb-12"
+          className="mb-14"
         >
 
           <div className="flex items-center gap-5">
 
-            {/* Orb */}
-            <motion.div
-              animate={{
-                scale: [1, 1.08, 1],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-              }}
-              className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-400 to-cyan-400 flex items-center justify-center shadow-2xl shadow-cyan-500/30"
-            >
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center shadow-[0_0_70px_rgba(34,211,238,0.45)]">
 
               <Brain className="w-10 h-10 text-white" />
 
-            </motion.div>
+            </div>
 
             <div>
 
               <h1 className="text-5xl font-bold">
-                Analytics
+
+                NOVA Analytics
+
               </h1>
 
               <p className="text-gray-400 mt-2 text-lg">
-                AI-powered behavioral intelligence dashboard.
+
+                Behavioral intelligence and adaptive optimization metrics
+
               </p>
 
             </div>
@@ -224,326 +309,313 @@ export default function AnalyticsPage() {
 
         </motion.div>
 
-        {/* Top Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        {/* METRICS */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
 
-          {/* Completion */}
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-          >
+          <MetricCard
+            icon={Activity}
+            title="Discipline"
+            value={`${disciplineScore}%`}
+            color="text-cyan-300"
+          />
 
-            <TrendingUp className="text-green-400 w-8 h-8 mb-4" />
+          <MetricCard
+            icon={Wallet}
+            title="Remaining"
+            value={`₹${remaining}`}
+            color="text-green-300"
+          />
 
-            <p className="text-gray-400 mb-2">
-              Completion Rate
-            </p>
+          <MetricCard
+            icon={Flame}
+            title="Burnout Risk"
+            value={burnoutRisk}
+            color="text-orange-300"
+          />
 
-            <h2 className="text-5xl font-bold text-green-400">
-              {completionRate}%
-            </h2>
-
-          </motion.div>
-
-          {/* Tasks */}
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-          >
-
-            <Activity className="text-cyan-400 w-8 h-8 mb-4" />
-
-            <p className="text-gray-400 mb-2">
-              Total Tasks
-            </p>
-
-            <h2 className="text-5xl font-bold">
-              {tasks.length}
-            </h2>
-
-          </motion.div>
-
-          {/* Expenses */}
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-          >
-
-            <Wallet className="text-red-400 w-8 h-8 mb-4" />
-
-            <p className="text-gray-400 mb-2">
-              Total Expenses
-            </p>
-
-            <h2 className="text-5xl font-bold text-red-400">
-              ₹{totalExpenses}
-            </h2>
-
-          </motion.div>
-
-          {/* AI Score */}
-          <motion.div
-            whileHover={{
-              scale: 1.03,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-          >
-
-            <Sparkles className="text-purple-400 w-8 h-8 mb-4" />
-
-            <p className="text-gray-400 mb-2">
-              AI Productivity
-            </p>
-
-            <h2 className="text-5xl font-bold text-purple-400">
-              {Math.min(
-                100,
-                completionRate +
-                  completedTasks *
-                    5
-              )}
-              %
-            </h2>
-
-          </motion.div>
+          <MetricCard
+            icon={Sparkles}
+            title="AI Mood"
+            value={aiMood}
+            color="text-purple-300"
+          />
 
         </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-10">
+        {/* CHARTS */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
 
-          {/* Productivity */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-[500px]"
-          >
+          {/* PRODUCTIVITY */}
+          <div className="bg-white/5 border border-white/10 rounded-[35px] p-8 backdrop-blur-3xl">
 
-            <div className="flex items-center gap-4 mb-8">
+            <h2 className="text-3xl font-bold mb-8">
 
-              <Activity className="text-cyan-400 w-8 h-8" />
+              Productivity Trend
 
-              <div>
+            </h2>
 
-                <h2 className="text-3xl font-bold">
-                  Productivity
-                </h2>
+            <div className="h-[320px]">
 
-                <p className="text-gray-400">
-                  Task performance analysis
-                </p>
-
-              </div>
-
-            </div>
-          
-          <div className="w-full h-[300px]">
-            <ResponsiveContainer
-              width="100%"
-              height="100%"
-            >
-
-              <BarChart
-                data={
-                  productivityData
-                }
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
               >
 
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="#333"
-                />
-
-                <XAxis
-                  dataKey="name"
-                />
-
-                <YAxis />
-
-                <Tooltip />
-
-                <Bar
-                  dataKey="value"
-                  fill="#06b6d4"
-                  radius={[
-                    10,
-                    10,
-                    0,
-                    0,
-                  ]}
-                />
-
-              </BarChart>
-
-            </ResponsiveContainer>
-          </div>
-
-          </motion.div>
-
-          {/* Expense Pie */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-[500px]"
-          >
-
-            <div className="flex items-center gap-4 mb-8">
-
-              <Wallet className="text-green-400 w-8 h-8" />
-
-              <div>
-
-                <h2 className="text-3xl font-bold">
-                  Expenses
-                </h2>
-
-                <p className="text-gray-400">
-                  Spending distribution analysis
-                </p>
-
-              </div>
-
-            </div>
-          <div>
-            <ResponsiveContainer
-              width="100%"
-              height="100%"
-            >
-
-              <PieChart>
-
-                <Pie
+                <LineChart
                   data={
-                    expenseChartData
+                    productivityData
                   }
-                  dataKey="value"
-                  nameKey="name"
-                  outerRadius={150}
-                  label
                 >
 
-                  {expenseChartData.map(
-                    (
-                      entry,
-                      index
-                    ) => (
+                  <CartesianGrid
+                    stroke="rgba(255,255,255,0.08)"
+                  />
 
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={
-                          COLORS[
-                            index %
-                              COLORS.length
-                          ]
-                        }
-                      />
+                  <XAxis
+                    dataKey="day"
+                    stroke="#888"
+                  />
 
-                    )
-                  )}
+                  <YAxis
+                    stroke="#888"
+                  />
 
-                </Pie>
+                  <Tooltip />
 
-                <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="productivity"
+                    stroke="#22d3ee"
+                    strokeWidth={4}
+                  />
 
-              </PieChart>
+                </LineChart>
 
-            </ResponsiveContainer>
+              </ResponsiveContainer>
+
+            </div>
+
           </div>
-          </motion.div>
+
+          {/* NUTRITION */}
+          <div className="bg-white/5 border border-white/10 rounded-[35px] p-8 backdrop-blur-3xl">
+
+            <h2 className="text-3xl font-bold mb-8">
+
+              Nutrition Breakdown
+
+            </h2>
+
+            <div className="h-[320px]">
+
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+              >
+
+                <PieChart>
+
+                  <Pie
+                    data={
+                      nutritionData
+                    }
+                    dataKey="value"
+                    outerRadius={110}
+                  >
+
+                    {nutritionData.map(
+                      (
+                        entry,
+                        index
+                      ) => (
+
+                        <Cell
+                          key={index}
+                          fill={
+                            entry.color
+                          }
+                        />
+
+                      )
+                    )}
+
+                  </Pie>
+
+                  <Tooltip />
+
+                </PieChart>
+
+              </ResponsiveContainer>
+
+            </div>
+
+          </div>
 
         </div>
 
-        {/* AI Insight */}
-        <motion.div
-          initial={{
-            opacity: 0,
-          }}
-          animate={{
-            opacity: 1,
-          }}
-          className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 rounded-3xl p-8"
-        >
+        {/* RADAR + AI */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
 
-          <div className="flex items-start gap-5">
+          {/* RADAR */}
+          <div className="bg-white/5 border border-white/10 rounded-[35px] p-8 backdrop-blur-3xl">
 
-            <Sparkles className="text-cyan-400 w-10 h-10" />
+            <h2 className="text-3xl font-bold mb-8">
 
-            <div>
+              Neural Performance Matrix
 
-              <h2 className="text-3xl font-bold mb-4">
-                AI Behavioral Observation
-              </h2>
+            </h2>
 
-              <div className="space-y-4 text-gray-300 leading-8 text-lg">
+            <div className="h-[350px]">
 
-                {completionRate <
-                  40 && (
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+              >
 
-                  <p>
-                    📉 Productivity consistency is currently below optimal levels.
-                  </p>
+                <RadarChart
+                  data={radarData}
+                >
 
-                )}
+                  <PolarGrid />
 
-                {completionRate >=
-                  70 && (
+                  <PolarAngleAxis
+                    dataKey="subject"
+                  />
 
-                  <p>
-                    🚀 High task consistency detected. Current systems are effective.
-                  </p>
+                  <PolarRadiusAxis />
 
-                )}
+                  <Radar
+                    dataKey="A"
+                    stroke="#22d3ee"
+                    fill="#22d3ee"
+                    fillOpacity={0.5}
+                  />
 
-                {totalExpenses >
-                  10000 && (
+                </RadarChart>
 
-                  <p>
-                    💸 Spending activity has increased significantly.
-                  </p>
-
-                )}
-
-                {tasks.length >=
-                  10 && (
-
-                  <p>
-                    ⚠️ High workload detected. Consider recovery scheduling.
-                  </p>
-
-                )}
-
-                <p>
-                  🧠 Long-term consistency remains the strongest predictor of sustainable productivity.
-                </p>
-
-              </div>
+              </ResponsiveContainer>
 
             </div>
 
           </div>
 
-        </motion.div>
+          {/* AI INSIGHTS */}
+          <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-[35px] p-8">
+
+            <div className="flex items-center gap-4 mb-8">
+
+              <ShieldCheck className="w-8 h-8 text-cyan-300" />
+
+              <h2 className="text-3xl font-bold">
+
+                AI Prediction Engine
+
+              </h2>
+
+            </div>
+
+            <div className="space-y-6">
+
+              <InsightCard
+                title="Burnout Probability"
+                value={burnoutRisk}
+                color="text-orange-300"
+              />
+
+              <InsightCard
+                title="Momentum Forecast"
+                value={momentum}
+                color="text-cyan-300"
+              />
+
+              <InsightCard
+                title="Recovery Status"
+                value={
+                  totalProtein >= 100
+                    ? "Stable"
+                    : "Needs Optimization"
+                }
+                color="text-green-300"
+              />
+
+              <InsightCard
+                title="Behavioral State"
+                value={
+                  disciplineScore >= 80
+                    ? "Optimized"
+                    : "Adaptive"
+                }
+                color="text-purple-300"
+              />
+
+            </div>
+
+          </div>
+
+        </div>
 
       </section>
 
     </main>
+  );
+}
+
+function MetricCard({
+  icon: Icon,
+  title,
+  value,
+  color,
+}: any) {
+
+  return (
+
+    <motion.div
+      whileHover={{
+        scale: 1.03,
+      }}
+      className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-2xl"
+    >
+
+      <Icon className={`w-8 h-8 mb-4 ${color}`} />
+
+      <p className="text-gray-400 mb-2">
+
+        {title}
+
+      </p>
+
+      <h2 className={`text-4xl font-bold ${color}`}>
+
+        {value}
+
+      </h2>
+
+    </motion.div>
+  );
+}
+
+function InsightCard({
+  title,
+  value,
+  color,
+}: any) {
+
+  return (
+
+    <div className="bg-black/30 border border-white/10 rounded-3xl p-6">
+
+      <p className="text-gray-400 mb-2">
+
+        {title}
+
+      </p>
+
+      <h2 className={`text-2xl font-bold ${color}`}>
+
+        {value}
+
+      </h2>
+
+    </div>
   );
 }

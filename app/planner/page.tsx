@@ -4,6 +4,8 @@ import Sidebar from "@/components/Sidebar";
 
 import AIDailyPlanner from "@/components/AIDailyPlanner";
 
+import AIDailyPlannerEngine from "@/components/AIDailyPlannerEngine";
+
 import {
   useLifeOS,
 } from "@/context/LifeOSContext";
@@ -14,6 +16,7 @@ import {
   Brain,
   Sparkles,
   CheckCircle2,
+  Zap,
 } from "lucide-react";
 
 import {
@@ -50,6 +53,40 @@ export default function PlannerPage() {
       : pendingTasks >= 3
       ? "Moderate"
       : "Balanced";
+
+  // =====================
+  // FOCUS LOAD
+  // =====================
+
+  const highFocusTasks =
+    tasks.filter(
+      (task: any) => {
+
+        const text =
+          (
+            task.title ||
+            ""
+          ).toLowerCase();
+
+        return (
+          text.includes(
+            "project"
+          ) ||
+          text.includes(
+            "exam"
+          ) ||
+          text.includes(
+            "assignment"
+          ) ||
+          text.includes(
+            "dsa"
+          ) ||
+          text.includes(
+            "interview"
+          )
+        );
+      }
+    ).length;
 
   return (
     <main className="flex min-h-screen bg-gradient-to-br from-black via-[#0f172a] to-black text-white overflow-hidden">
@@ -111,7 +148,7 @@ export default function PlannerPage() {
         </motion.div>
 
         {/* Top Analytics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
 
           {/* Pending */}
           <motion.div
@@ -189,6 +226,44 @@ export default function PlannerPage() {
 
           </motion.div>
 
+          {/* Focus */}
+          <motion.div
+            whileHover={{
+              scale: 1.03,
+            }}
+            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
+          >
+
+            <div className="flex items-center justify-between mb-5">
+
+              <div>
+
+                <p className="text-gray-400 mb-2">
+
+                  Deep Focus
+
+                </p>
+
+                <h2 className="text-5xl font-bold text-yellow-300">
+
+                  {highFocusTasks}
+
+                </h2>
+
+              </div>
+
+              <Zap className="text-yellow-300 w-10 h-10" />
+
+            </div>
+
+            <p className="text-gray-500">
+
+              High cognitive tasks detected
+
+            </p>
+
+          </motion.div>
+
           {/* System */}
           <motion.div
             whileHover={{
@@ -229,8 +304,19 @@ export default function PlannerPage() {
 
         </div>
 
-        {/* AI Planner */}
-        <AIDailyPlanner />
+        {/* EXISTING AI PLANNER */}
+        <div className="mb-10">
+
+          <AIDailyPlanner />
+
+        </div>
+
+        {/* NEW AI DAILY ENGINE */}
+        <div className="mb-10">
+
+          <AIDailyPlannerEngine />
+
+        </div>
 
         {/* Bottom Insight */}
         <motion.div
@@ -259,9 +345,7 @@ export default function PlannerPage() {
 
               <p className="text-gray-300 text-lg leading-9">
 
-                Long-term consistency outperforms short-term intensity.
-
-                NOVA continuously optimizes your workload balance, focus efficiency, recovery cycles, and behavioral sustainability to maximize performance without causing burnout.
+                NOVA is now dynamically balancing workload intensity, recovery cycles, deep-focus execution windows, and cognitive sustainability to optimize long-term performance without triggering burnout accumulation.
 
               </p>
 

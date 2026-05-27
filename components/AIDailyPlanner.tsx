@@ -1,17 +1,19 @@
 "use client";
 
 import {
-  motion,
-} from "framer-motion";
+  useMemo,
+} from "react";
 
 import {
   Brain,
   Clock3,
-  Zap,
-  Moon,
-  Target,
-  TrendingUp,
+  Flame,
+  Sparkles,
 } from "lucide-react";
+
+import {
+  motion,
+} from "framer-motion";
 
 import {
   useLifeOS,
@@ -21,423 +23,294 @@ export default function AIDailyPlanner() {
 
   const {
     tasks,
-    expenses,
   } = useLifeOS();
 
   // =====================
-  // ANALYTICS
+  // AI DAILY PLAN
   // =====================
 
-  const completedTasks =
-    tasks.filter(
-      (task: any) =>
-        task.completed
-    ).length;
+  const dailyPlan =
+    useMemo(() => {
 
-  const pendingTasks =
-    tasks.filter(
-      (task: any) =>
-        !task.completed
-    );
-
-  const productivityScore =
-    tasks.length === 0
-      ? 0
-      : Math.round(
-          (completedTasks /
-            tasks.length) *
-            100
+      const pending =
+        tasks.filter(
+          (task: any) =>
+            !task.completed
         );
 
-  const totalExpenses =
-    expenses.reduce(
-      (
-        total: number,
-        expense: any
-      ) =>
-        total +
-        expense.amount,
-      0
-    );
+      const morning: any[] = [];
+      const afternoon: any[] = [];
+      const evening: any[] = [];
 
-  // =====================
-  // AI LOGIC
-  // =====================
+      pending.forEach(
+        (task: any) => {
 
-  let focusRecommendation =
-    "Balanced productivity cycle recommended.";
+          const text =
+            (
+              task.title ||
+              ""
+            ).toLowerCase();
 
-  let recoveryRecommendation =
-    "Recovery levels appear stable.";
+          // HIGH FOCUS
+          if (
+            text.includes(
+              "project"
+            ) ||
+            text.includes(
+              "exam"
+            ) ||
+            text.includes(
+              "assignment"
+            ) ||
+            text.includes(
+              "interview"
+            ) ||
+            text.includes(
+              "dsa"
+            )
+          ) {
 
-  let burnoutStatus =
-    "Low";
+            morning.push(task);
 
-  let optimalFocusHours =
-    "2 - 3 hours";
+            return;
+          }
 
-  // Heavy overload
-  if (
-    pendingTasks.length >= 7
-  ) {
+          // LIGHT TASKS
+          if (
+            text.includes(
+              "email"
+            ) ||
+            text.includes(
+              "message"
+            ) ||
+            text.includes(
+              "meeting"
+            ) ||
+            text.includes(
+              "call"
+            )
+          ) {
 
-    focusRecommendation =
-      "Reduce workload pressure and prioritize fewer high-impact tasks.";
+            afternoon.push(task);
 
-    recoveryRecommendation =
-      "Recovery cycles are strongly recommended.";
+            return;
+          }
 
-    burnoutStatus =
-      "High";
+          // DEFAULT
+          evening.push(task);
+        }
+      );
 
-    optimalFocusHours =
-      "1.5 - 2 hours";
-  }
+      return {
+        morning,
+        afternoon,
+        evening,
+      };
 
-  // Medium overload
-  else if (
-    pendingTasks.length >= 4
-  ) {
-
-    focusRecommendation =
-      "Moderate workload detected. Use structured deep work sessions.";
-
-    recoveryRecommendation =
-      "Maintain balanced breaks and hydration.";
-
-    burnoutStatus =
-      "Moderate";
-
-    optimalFocusHours =
-      "2 - 4 hours";
-  }
-
-  // Productivity strong
-  if (
-    productivityScore >= 80
-  ) {
-
-    focusRecommendation =
-      "High consistency detected. Maintain momentum carefully.";
-
-    burnoutStatus =
-      "Low";
-  }
-
-  // Finance stress
-  if (
-    totalExpenses > 7000
-  ) {
-
-    recoveryRecommendation +=
-      " Financial pressure may also impact cognitive recovery.";
-  }
-
-  // Priority Tasks
-  const priorityTasks =
-    pendingTasks.slice(
-      0, 
-      3
-    );
+    }, [tasks]);
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
+    >
 
-      {/* Header */}
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: -10,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-      >
+      {/* HEADER */}
+      <div className="flex items-center gap-3 mb-6">
 
-        <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
 
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center shadow-2xl shadow-cyan-500/20">
-
-            <Brain className="text-white w-8 h-8" />
-
-          </div>
-
-          <div>
-
-            <h2 className="text-3xl font-bold text-white">
-
-              NOVA Daily Planner
-
-            </h2>
-
-            <p className="text-gray-400 mt-1">
-
-              AI-generated adaptive execution strategy
-
-            </p>
-
-          </div>
+          <Brain className="text-white w-6 h-6" />
 
         </div>
 
-      </motion.div>
+        <div>
 
-      {/* Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <h2 className="text-2xl font-bold text-white">
 
-        {/* Burnout */}
-        <motion.div
-          whileHover={{
-            scale: 1.02,
-          }}
-          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-        >
+            AI Daily Planner
 
-          <div className="flex items-center justify-between mb-5">
+          </h2>
 
-            <div>
+          <p className="text-gray-400">
 
-              <p className="text-gray-400 mb-2">
+            Adaptive execution scheduling engine
 
-                Burnout Status
+          </p>
 
-              </p>
-
-              <h2 className="text-5xl font-bold text-red-400">
-
-                {burnoutStatus}
-
-              </h2>
-
-            </div>
-
-            <Moon className="text-red-400 w-10 h-10" />
-
-          </div>
-
-        </motion.div>
-
-        {/* Focus */}
-        <motion.div
-          whileHover={{
-            scale: 1.02,
-          }}
-          className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
-        >
-
-          <div className="flex items-center justify-between mb-5">
-
-            <div>
-
-              <p className="text-gray-400 mb-2">
-
-                Deep Focus Window
-
-              </p>
-
-              <h2 className="text-5xl font-bold text-cyan-400">
-
-                {optimalFocusHours}
-
-              </h2>
-
-            </div>
-
-            <Clock3 className="text-cyan-400 w-10 h-10" />
-
-          </div>
-
-        </motion.div>
+        </div>
 
       </div>
 
-      {/* Recommendations */}
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 10,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-3xl p-8"
-      >
+      {/* EMPTY */}
+      {tasks.length === 0 && (
 
-        <div className="flex items-center gap-4 mb-6">
+        <div className="bg-black/30 border border-white/10 rounded-2xl p-6">
 
-          <TrendingUp className="text-cyan-400 w-8 h-8" />
+          <p className="text-gray-300 leading-8">
 
-          <div>
+            No tasks detected. Once tasks are added, NOVA will generate adaptive execution schedules and focus recommendations.
 
-            <h2 className="text-3xl font-bold text-white">
-
-              AI Daily Recommendations
-
-            </h2>
-
-            <p className="text-gray-400">
-
-              Intelligent behavioral optimization insights
-
-            </p>
-
-          </div>
+          </p>
 
         </div>
 
-        <div className="space-y-5">
+      )}
 
-          {/* Focus */}
-          <div className="bg-black/30 border border-white/10 rounded-2xl p-5">
+      {/* MORNING */}
+      <div className="mb-6">
 
-            <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-2 mb-4">
 
-              <Zap className="text-yellow-400" />
+          <Sparkles className="text-yellow-300 w-5 h-5" />
 
-              <h3 className="text-xl font-bold text-white">
+          <h3 className="text-xl font-semibold text-white">
 
-                Focus Optimization
+            Morning Deep Focus
 
-              </h3>
-
-            </div>
-
-            <p className="text-gray-300 text-lg leading-8">
-
-              {focusRecommendation}
-
-            </p>
-
-          </div>
-
-          {/* Recovery */}
-          <div className="bg-black/30 border border-white/10 rounded-2xl p-5">
-
-            <div className="flex items-center gap-3 mb-3">
-
-              <Moon className="text-blue-400" />
-
-              <h3 className="text-xl font-bold text-white">
-
-                Recovery Strategy
-
-              </h3>
-
-            </div>
-
-            <p className="text-gray-300 text-lg leading-8">
-
-              {recoveryRecommendation}
-
-            </p>
-
-          </div>
+          </h3>
 
         </div>
 
-      </motion.div>
+        <div className="space-y-3">
 
-      {/* Priority Tasks */}
-      <motion.div
-        initial={{
-          opacity: 0,
-          y: 10,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8"
-      >
+          {dailyPlan.morning.map(
+            (
+              task: any,
+              index: number
+            ) => (
 
-        <div className="flex items-center gap-4 mb-6">
+              <div
+                key={index}
+                className="bg-black/30 border border-white/10 rounded-2xl p-4"
+              >
 
-          <Target className="text-cyan-400 w-8 h-8" />
+                <h4 className="text-lg font-semibold text-white mb-2">
 
-          <div>
+                  {task.title}
 
-            <h2 className="text-3xl font-bold text-white">
+                </h4>
 
-              AI Priority Queue
+                <p className="text-cyan-300 text-sm">
 
-            </h2>
+                  High cognitive load detected. Morning execution recommended.
 
-            <p className="text-gray-400">
+                </p>
 
-              Recommended high-impact execution order
+              </div>
 
-            </p>
-
-          </div>
-
-        </div>
-
-        <div className="space-y-4">
-
-          {priorityTasks.length >
-          0 ? (
-
-            priorityTasks.map(
-              (
-                task: any,
-                index
-              ) => (
-
-                <motion.div
-                  key={task.id}
-                  initial={{
-                    opacity: 0,
-                    x: -10,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    x: 0,
-                  }}
-                  transition={{
-                    delay:
-                      index * 0.1,
-                  }}
-                  className="bg-black/30 border border-white/10 rounded-2xl p-5"
-                >
-
-                  <div className="flex items-center gap-4">
-
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center font-bold">
-
-                      {index + 1}
-
-                    </div>
-
-                    <p className="text-lg text-gray-200">
-
-                      {task.title}
-
-                    </p>
-
-                  </div>
-
-                </motion.div>
-
-              )
             )
-
-          ) : (
-
-            <p className="text-gray-500">
-
-              No pending tasks detected.
-
-            </p>
-
           )}
 
         </div>
 
-      </motion.div>
+      </div>
 
-    </div>
+      {/* AFTERNOON */}
+      <div className="mb-6">
+
+        <div className="flex items-center gap-2 mb-4">
+
+          <Clock3 className="text-cyan-300 w-5 h-5" />
+
+          <h3 className="text-xl font-semibold text-white">
+
+            Afternoon Execution
+
+          </h3>
+
+        </div>
+
+        <div className="space-y-3">
+
+          {dailyPlan.afternoon.map(
+            (
+              task: any,
+              index: number
+            ) => (
+
+              <div
+                key={index}
+                className="bg-black/30 border border-white/10 rounded-2xl p-4"
+              >
+
+                <h4 className="text-lg font-semibold text-white mb-2">
+
+                  {task.title}
+
+                </h4>
+
+                <p className="text-cyan-300 text-sm">
+
+                  Lightweight execution task detected. Can be efficiently batched.
+
+                </p>
+
+              </div>
+
+            )
+          )}
+
+        </div>
+
+      </div>
+
+      {/* EVENING */}
+      <div>
+
+        <div className="flex items-center gap-2 mb-4">
+
+          <Flame className="text-pink-300 w-5 h-5" />
+
+          <h3 className="text-xl font-semibold text-white">
+
+            Evening Recovery Window
+
+          </h3>
+
+        </div>
+
+        <div className="space-y-3">
+
+          {dailyPlan.evening.map(
+            (
+              task: any,
+              index: number
+            ) => (
+
+              <div
+                key={index}
+                className="bg-black/30 border border-white/10 rounded-2xl p-4"
+              >
+
+                <h4 className="text-lg font-semibold text-white mb-2">
+
+                  {task.title}
+
+                </h4>
+
+                <p className="text-cyan-300 text-sm">
+
+                  Flexible execution recommended during lower-energy hours.
+
+                </p>
+
+              </div>
+
+            )
+          )}
+
+        </div>
+
+      </div>
+
+    </motion.div>
   );
 }
