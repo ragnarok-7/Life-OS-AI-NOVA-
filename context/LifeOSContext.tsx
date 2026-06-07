@@ -185,6 +185,15 @@ export function LifeOSProvider({
   ] = useState<any[]>([]);
 
   // =====================
+  // AI AGENTS
+  // =====================
+
+  const [
+    agentRecommendations,
+    setAgentRecommendations,
+  ] = useState<any[]>([]);
+
+  // =====================
   // LOAD LOCAL STORAGE
   // =====================
 
@@ -316,6 +325,10 @@ export function LifeOSProvider({
           parsed.achievements || []
         );
 
+        setAgentRecommendations(
+            parsed.agentRecommendations || []
+        );
+
       } catch (
         error
       ) {
@@ -374,6 +387,8 @@ export function LifeOSProvider({
       level,
 
       achievements,
+
+      agentRecommendations,
     };
 
     localStorage.setItem(

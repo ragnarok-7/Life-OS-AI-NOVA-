@@ -22,6 +22,24 @@ import {
 } from "lucide-react";
 
 import {
+
+  LineChart,
+
+  Line,
+
+  XAxis,
+
+  YAxis,
+
+  Tooltip,
+
+  ResponsiveContainer,
+
+  CartesianGrid,
+
+} from "recharts";
+
+import {
   motion,
 } from "framer-motion";
 
@@ -47,7 +65,21 @@ export default function FinancePage() {
   const [
     category,
     setCategory,
-  ] = useState("");
+  ] = useState("Food");
+
+  const [
+    expenseType,
+    setExpenseType,
+  ] = useState("Daily");
+
+  const [
+    chartMode,
+    setChartMode,
+  ] = useState<
+    "daily" | "monthly"
+  >(
+    "daily"
+  );
 
   // =====================
   // ADD EXPENSE
@@ -65,11 +97,13 @@ export default function FinancePage() {
       const newExpense = {
         id: Date.now(),
         title,
-        amount: Number(
-          amount
-        ),
-        category:
-          category || "General",
+        amount: Number(amount),
+        category,
+        expenseType,
+        date:
+          new Date()
+            .toISOString()
+            .split("T")[0],
       };
 
       setExpenses([
@@ -79,7 +113,8 @@ export default function FinancePage() {
 
       setTitle("");
       setAmount("");
-      setCategory("");
+      setCategory("Food");
+      setExpenseType("Daily");
     };
 
   // =====================
@@ -137,6 +172,210 @@ export default function FinancePage() {
   const remainingBalance =
     (Number(salary) || 0) -
     totalExpenses;
+
+  const mandatoryExpenses =
+    expenses
+      .filter(
+        (
+          expense: any
+        ) =>
+          expense.expenseType ===
+          "Mandatory"
+      )
+      .reduce(
+       (
+          total: number,
+          expense: any
+        ) =>
+          total +
+          expense.amount,
+        0
+      );
+  const dailyExpenses =
+    expenses
+      .filter(
+        (
+          expense: any
+        ) =>
+          expense.expenseType ===
+          "Daily"
+      )
+      .reduce(
+        (
+          total: number,
+          expense: any
+        ) =>
+          total +
+          expense.amount,
+        0
+      );
+  
+  const today =
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
+  const todaySpent =
+    expenses
+      .filter(
+        (
+          expense: any
+        ) =>
+          expense.date ===
+          today
+      )
+      .reduce(
+        (
+          total: number,
+          expense: any
+        ) =>
+          total +
+          expense.amount,
+        0
+      );
+  
+  const spendingPulse = [];
+
+  for (
+    let i = 29;
+    i >= 0;
+    i--
+  ) {
+
+    const date =
+      new Date();
+
+    date.setDate(
+      date.getDate() - i
+    );
+
+    const dateString =
+      date
+        .toISOString()
+        .split("T")[0];
+
+    const spent =
+      expenses
+
+        .filter(
+          (
+            expense: any
+          ) =>
+            expense.date ===
+            dateString
+        )
+
+        .reduce(
+          (
+            total: number,
+            expense: any
+          ) =>
+            total +
+            Number(
+              expense.amount
+            ),
+
+          0
+        );
+
+    spendingPulse.push({
+
+      day:
+        date.toLocaleDateString(
+          "en-US",
+          {
+            weekday:
+              "short",
+          }
+        ),
+
+      date:
+        date.toLocaleDateString(
+          "en-US",
+          {
+            month:
+              "short",
+
+            day:
+              "numeric",
+          }
+        ),
+
+      spent,
+
+    });
+
+  }
+
+  const monthlySpending = [];
+
+  for (
+    let i = 5;
+    i >= 0;
+    i--
+  ) {
+
+    const date =
+      new Date();
+
+    date.setMonth(
+      date.getMonth() - i
+    );
+
+    const month =
+      date.toLocaleDateString(
+        "en-US",
+        {
+          month: "short",
+        }
+      );
+
+    const year =
+      date.getFullYear();
+
+    const spent =
+      expenses
+        .filter(
+          (
+            expense: any
+          ) => {
+
+            if (
+              !expense.date
+            )
+              return false;
+
+            const expenseDate =
+              new Date(
+                expense.date
+              );
+
+            return (
+              expenseDate.getMonth() ===
+                date.getMonth() &&
+              expenseDate.getFullYear() ===
+                year
+            );
+          }
+        )
+        .reduce(
+          (
+            total: number,
+            expense: any
+          ) =>
+            total +
+            Number(
+              expense.amount
+            ),
+          0
+        );
+
+    monthlySpending.push({
+      month,
+      spent,
+    });
+
+  }
 
   return (
     <main className="flex min-h-screen bg-gradient-to-br from-black via-[#0f172a] to-black text-white overflow-hidden">
@@ -198,7 +437,7 @@ export default function FinancePage() {
         </motion.div>
 
         {/* Top Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-10">
 
           {/* Salary */}
           <motion.div
@@ -229,6 +468,80 @@ export default function FinancePage() {
               <PiggyBank className="text-green-400 w-10 h-10" />
 
             </div>
+          <motion.div
+            whileHover={{
+              scale: 1.03,
+            }}
+            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
+          >
+          
+            <div>
+          
+              <p className="text-gray-400 mb-2">
+          
+                Mandatory
+          
+              </p>
+          
+              <h2 className="text-4xl font-bold text-orange-400">
+          
+                ₹{mandatoryExpenses}
+          
+              </h2>
+          
+            </div>
+
+          </motion.div>
+
+          <motion.div
+            whileHover={{
+              scale: 1.03,
+            }}
+            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
+          >
+          
+            <div>
+          
+              <p className="text-gray-400 mb-2">
+          
+                Daily
+          
+              </p>
+          
+              <h2 className="text-4xl font-bold text-purple-400">
+          
+                ₹{dailyExpenses}
+          
+              </h2>
+          
+            </div>
+          
+          </motion.div>
+
+          <motion.div
+            whileHover={{
+              scale: 1.03,
+            }}
+            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6"
+          >
+          
+            <div>
+          
+              <p className="text-gray-400 mb-2">
+          
+                Today
+          
+              </p>
+          
+              <h2 className="text-4xl font-bold text-yellow-400">
+          
+                ₹{todaySpent}
+          
+              </h2>
+          
+            </div>
+          
+          </motion.div>
 
           </motion.div>
 
@@ -334,7 +647,7 @@ export default function FinancePage() {
 
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
 
             <input
               type="text"
@@ -366,20 +679,43 @@ export default function FinancePage() {
               className="bg-black/30 border border-white/10 rounded-2xl px-5 py-4 outline-none text-lg"
             />
 
-            <input
-              type="text"
-              placeholder="Category..."
+            <select
               value={category}
               onChange={(e) =>
                 setCategory(
                   e.target.value
                 )
               }
-              onKeyDown={
-                handleKeyDown
+              className="bg-black/30 border border-white/10 rounded-2xl px-5 py-4 outline-none text-lg"
+            >
+            
+              <option>Food</option>
+              <option>Transport</option>
+              <option>Shopping</option>
+              <option>Entertainment</option>
+              <option>Rent</option>
+              <option>Loan</option>
+              <option>Internet</option>
+              <option>Electricity</option>
+              <option>Miscellaneous</option>
+            
+            </select>
+
+            <select
+              value={expenseType}
+              onChange={(e) =>
+                setExpenseType(
+                  e.target.value
+                )
               }
               className="bg-black/30 border border-white/10 rounded-2xl px-5 py-4 outline-none text-lg"
-            />
+            >
+            
+              <option>Daily</option>
+            
+              <option>Mandatory</option>
+            
+            </select>
 
             <motion.button
               whileHover={{
@@ -399,6 +735,169 @@ export default function FinancePage() {
               Add
 
             </motion.button>
+
+          </div>
+
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 mb-10">
+
+          <div className="flex items-center justify-between mb-6">
+
+            <div className="flex items-center gap-4">
+
+              <h2 className="text-3xl font-bold">
+
+                Spending Pulse
+
+              </h2>
+
+              <div className="flex gap-2">
+
+                <button
+                  onClick={() =>
+                    setChartMode(
+                      "daily"
+                    )
+                  }
+                  className={`px-4 py-2 rounded-xl text-sm transition-all ${
+                    chartMode ===
+                    "daily"
+                      ? "bg-green-500 text-black"
+                      : "bg-white/10 text-white"
+                  }`}
+                >
+                
+                  Daily
+                
+                </button>
+                
+                <button
+                  onClick={() =>
+                    setChartMode(
+                      "monthly"
+                    )
+                  }
+                  className={`px-4 py-2 rounded-xl text-sm transition-all ${
+                    chartMode ===
+                    "monthly"
+                      ? "bg-cyan-500 text-black"
+                      : "bg-white/10 text-white"
+                  }`}
+                >
+                
+                  Monthly
+                
+                </button>
+                
+              </div>
+                
+            </div>
+                
+            <div>
+                
+              <p className="text-sm text-gray-400">
+                
+                Today
+                
+              </p>
+                
+              <h3 className="text-xl font-bold text-green-400">
+                
+                ₹{todaySpent}
+                
+              </h3>
+                
+            </div>
+                
+          </div>
+
+          <div className="h-[250px]">
+
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+            >
+
+              <LineChart
+                data={
+                  chartMode ===
+                  "daily"
+                    ? spendingPulse
+                    : monthlySpending
+                }
+              >
+
+                <defs>
+
+                  <linearGradient
+                    id="financeGradient"
+                    x1="0"
+                    y1="0"
+                    x2="1"
+                    y2="0"
+                  >
+
+                    <stop
+                      offset="0%"
+                      stopColor="#22c55e"
+                    />
+
+                    <stop
+                      offset="100%"
+                      stopColor="#06b6d4"
+                    />
+
+                  </linearGradient>
+
+                </defs>
+
+                <XAxis
+                  dataKey={
+                    chartMode ===
+                    "daily"
+                      ? "date"
+                      : "month"
+                  }
+                  tick={{
+                    fill:"#64748b"
+                  }}
+                />
+
+                <Tooltip />
+
+                <Line
+
+                  type="monotone"
+
+                  dataKey="spent"
+
+                  stroke={
+                    chartMode ===
+                    "daily"
+                      ? "#22c55e"
+                      : "#06b6d4"
+                  }
+
+                  strokeWidth={5}
+
+                  dot={false}
+
+                  activeDot={{
+
+                    r:10,
+
+                    fill:"#22c55e",
+
+                    stroke:"#22c55e",
+
+                  }}
+
+                />
+
+              </LineChart>
+
+            </ResponsiveContainer>
 
           </div>
 
@@ -437,6 +936,12 @@ export default function FinancePage() {
                         {expense.title}
 
                       </h3>
+
+                      <p className="text-gray-500 text-sm">
+
+                        {expense.date}
+
+                      </p>
 
                       <p className="text-gray-400 mt-1">
 
