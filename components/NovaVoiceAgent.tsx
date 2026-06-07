@@ -37,6 +37,10 @@ export default function NovaVoice() {
   const {
     setAiListening,
     setAiSpeaking,
+
+    conversations,
+    setConversations,
+    
     setTasks,
     tasks,
     setMeals,
@@ -136,123 +140,131 @@ export default function NovaVoice() {
   // =====================
 
   const handleCommand =
-    async (
-      transcript: string
-    ) => {
+  async (
+    transcript: string
+  ) => {
 
-      try {
+    const command =
+      transcript.toLowerCase();
 
-        const response =
-          await fetch(
-            "/api/voice-ai",
-            {
+    // DASHBOARD
+    if (
+      command.includes(
+        "dashboard"
+      )
+    ) {
 
-              method:
-                "POST",
+      speak(
+        "Opening dashboard."
+      );
 
-              headers: {
+      router.push(
+        "/dashboard"
+      );
 
-                "Content-Type":
-                  "application/json",
-              },
+      return;
+    }
 
-              body:
-                JSON.stringify({
+    // TASKS
+    if (
+      command.includes(
+        "tasks"
+      )
+    ) {
 
-                  message:
-                    transcript,
-                }),
-            }
-          );
+      speak(
+        "Opening tasks."
+      );
 
-        const data =
-          await response.json();
+      router.push(
+        "/tasks"
+      );
 
-        // =====================
-        // COMMAND MODE
-        // =====================
+      return;
+    }
 
-        if (
-          data.type ===
-          "command"
-        ) {
+    // PLANNER
+    if (
+      command.includes(
+        "planner"
+      )
+    ) {
 
-          speak(
-            data.response
-          );
+      speak(
+        "Opening planner."
+      );
 
-          // NAVIGATION
-          if (
-            data.action ===
-            "navigate"
-          ) {
+      router.push(
+        "/planner"
+      );
 
-            router.push(
-              data.target
-            );
-          }
+      return;
+    }
 
-          // TASK CREATION
-          if (
-            data.action ===
-            "create_task"
-          ) {
+    // FINANCE
+    if (
+      command.includes(
+        "finance"
+      )
+    ) {
 
-            setTasks([
-              {
-                id: Date.now(),
-                title:
-                  data.task,
-                completed:
-                  false,
-              },
+      speak(
+        "Opening finance."
+      );
 
-              ...tasks,
-            ]);
-          }
+      router.push(
+        "/finance"
+      );
 
-          // MEAL LOGGING
-          if (
-            data.action ===
-            "log_meal"
-          ) {
+      return;
+    }
 
-            setMeals([
-              {
-                id: Date.now(),
-                mealName:
-                  data.meal,
-                mealTime:
-                  new Date()
-                    .toLocaleTimeString(),
-                calories: 0,
-                protein: 0,
-                carbs: 0,
-                fats: 0,
-              },
+    // MEMORY
+    if (
+      command.includes(
+        "memory"
+      )
+    ) {
 
-              ...meals,
-            ]);
-          }
+      speak(
+        "Opening memory."
+      );
 
-          return;
-        }
+      router.push(
+        "/memory"
+      );
 
-        // =====================
-        // NORMAL AI RESPONSE
-        // =====================
+      return;
+    }
 
-        speak(
-          data.response
-        );
+    const response =
+  `You said ${transcript}`;
 
-      } catch {
+setConversations(
+  (prev: any[]) => [
 
-        speak(
-          "Something went wrong."
-        );
-      }
-    };
+    ...prev,
+
+    {
+      role: "user",
+      content:
+        transcript,
+    },
+
+    {
+      role: "assistant",
+      content:
+        response,
+    },
+
+  ]
+);
+
+speak(
+  response
+);
+
+  };
 
   // =====================
   // INIT SPEECH
@@ -357,27 +369,87 @@ export default function NovaVoice() {
     };
 
   return (
-    <button
-      onClick={
-        toggleListening
-      }
-      className={`fixed bottom-8 left-8 z-50 w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all ${
-        listening
-          ? "bg-red-500"
-          : "bg-gradient-to-r from-cyan-400 to-blue-500"
-      }`}
-    >
 
-      {listening ? (
+  <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
 
-        <MicOff className="text-white w-7 h-7" />
+    <div className="flex items-center gap-3 mb-5">
 
-      ) : (
+      <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center">
 
-        <Mic className="text-white w-7 h-7" />
+        <Mic className="w-6 h-6 text-white" />
 
-      )}
+      </div>
 
-    </button>
-  );
+      <div>
+
+        <h2 className="text-xl font-bold">
+
+          NOVA Voice Assistant
+
+        </h2>
+
+        <p className="text-gray-400 text-sm">
+
+          Voice Control & AI Interaction
+
+        </p>
+
+      </div>
+
+    </div>
+
+    <div className="flex items-center justify-between">
+
+      <div>
+
+        <p className="text-gray-400">
+
+          Status
+
+        </p>
+
+        <p
+          className={`font-semibold ${
+            listening
+              ? "text-red-400"
+              : "text-green-400"
+          }`}
+        >
+
+          {listening
+            ? "Listening..."
+            : "Ready"}
+
+        </p>
+
+      </div>
+
+      <button
+        onClick={
+          toggleListening
+        }
+        className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
+          listening
+            ? "bg-red-500"
+            : "bg-gradient-to-r from-cyan-400 to-blue-500"
+        }`}
+      >
+
+        {listening ? (
+
+          <MicOff className="text-white w-7 h-7" />
+
+        ) : (
+
+          <Mic className="text-white w-7 h-7" />
+
+        )}
+
+      </button>
+
+    </div>
+
+  </div>
+
+);
 }

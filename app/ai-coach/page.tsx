@@ -188,7 +188,7 @@ Behavioral Intelligence Report:
 ${memories
   .map(
     (
-      memory: any
+      memory
     ) =>
       `• ${memory}`
   )
@@ -487,8 +487,8 @@ Your productivity, finance, and behavioral systems are continuously being analyz
 
                   memories.map(
                     (
-                      memory: any,
-                      index: number
+                      memory,
+                      index
                     ) => (
 
                       <motion.div

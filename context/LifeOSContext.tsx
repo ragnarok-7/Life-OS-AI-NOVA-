@@ -842,12 +842,7 @@ export function LifeOSProvider({
 
     // AI MEMORY
 
-    const generatedMemories: {
-      id: number;
-      memory: string;
-      type: string;
-    }[]
-    =
+    const generatedMemories =
       [];
 
     if (

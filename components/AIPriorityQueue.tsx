@@ -167,8 +167,8 @@ export default function AIPriorityQueue() {
 
         .sort(
           (
-            a: {score: number;},
-            b: {score: number;}
+            a,
+            b
           ) =>
             b.score -
             a.score
