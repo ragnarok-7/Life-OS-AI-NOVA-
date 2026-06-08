@@ -376,7 +376,9 @@ speak(
 
       <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center justify-center">
 
-        <Mic className="w-6 h-6 text-white" />
+        <Mic
+        size={24} 
+        className="text-white shrink-0 rotate-0" />
 
       </div>
 
@@ -437,7 +439,9 @@ speak(
 
         {listening ? (
 
-          <MicOff className="text-white w-7 h-7" />
+          <MicOff 
+          size={24}
+          className="text-white shrink-0 rotate-0" />
 
         ) : (
 
